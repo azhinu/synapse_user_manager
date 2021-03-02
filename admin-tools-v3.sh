@@ -1,9 +1,9 @@
 #!/bin/bash
 
-realm="lt.loc"
-domain="https://synapse.azhinu.loc"
-registration_secret="Z5Rw6cTXYh-f=0s4:sCzD~*:BsWzyq,m.7JzjZ&T5C_3zb.cQd"
-access_token='MDAxNGxvY2F0aW9uIGx0LmxvYwowMDEzaWRlbnRpZmllciBrZXkKMDAxMGNpZCBnZW4gPSAxCjAwMjFjaWQgdXNlcl9pZCA9IEBhemhpbnU6bHQubG9jCjAwMTZjaWQgdHlwZSA9IGFjY2VzcwowMDIxY2lkIG5vbmNlID0gOSw2azJiZ0c6Tl54S3FpNQowMDJmc2lnbmF0dXJlINurAFoOEH-iuR0Z9kfZYdJdhe1-VpRPWiazWFYES7SHCg'
+realm="matrix.loc"
+domain="https://synapse.loc"
+registration_secret="get it in config"
+access_token="get it in element"
 
 #Start menu
 while [ "$done" != "true" ]
@@ -20,7 +20,7 @@ case "$option" in
 echo -e "Enter user you'd like to deactivate\n";
 read user
 
-curl -XPOST -H "Authorization: Bearer $access_token" -H "$domain/_synapse/admin/v1/deactivate/@$user:$realm"
+curl -XPOST -H "Authorization: Bearer $access_token" "$domain/_synapse/admin/v1/deactivate/@$user:$realm"
 ;;
 
 
@@ -42,8 +42,10 @@ read user
 echo -e "Enter new passs";
 read pass
 
-curl -XPOST -H "Authorization: Bearer $access_token" -H "Content-Type: application/json" -d \
-  '{"new_password":"'$pass'"}' "$domain/_synapse/admin/v1/reset_password/@$user:$realm"
+# curl -XPOST -H "Authorization: Bearer $access_token" -H "Content-Type: application/json" -d \
+#   '{"new_password":"'$pass'"}' "$domain/_synapse/admin/v1/reset_password/@$user:$realm"
+curl --insecure -XPUT -H "Authorization: Bearer $access_token" -H "Content-Type: application/json" -d \
+  '{"password":"'$pass'","deactivated": false}' "$domain/_synapse/admin/v2/users/@$user:$realm"
 ;;
 
 "4")
