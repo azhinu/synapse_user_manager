@@ -1,9 +1,30 @@
 #!/bin/bash
 
-realm="matrix.loc"
-domain="https://synapse.loc"
+#Set these vars manually.
+realm="matrix.local"
+domain="https://matrix.local"
 registration_secret="get it in config"
-access_token="get it in element"
+admin_user="someuser"
+admin_pass="somepasswd"
+#End vars section
+
+function GetAccessToken() {
+  curl -s \
+    -XPOST \
+    -d "{
+          \"type\": \"m.login.password\",
+          \"identifier\": {
+            \"type\": \"m.id.user\",
+            \"user\": \"$admin_user\"
+          },
+          \"password\": \"$admin_pass\"
+        }" \
+    ${domain}/_matrix/client/r0/login |
+      jq -r ".access_token"
+}
+
+echo "Getting access token..."
+access_token="$(GetAccessToken)"
 
 #Start menu
 while [ "$done" != "true" ]
@@ -20,7 +41,7 @@ case "$option" in
 echo -e "Enter user you'd like to deactivate\n";
 read user
 
-curl -XPOST -H "Authorization: Bearer $access_token" "$domain/_synapse/admin/v1/deactivate/@$user:$realm"
+curl -XPOST -s -H "Authorization: Bearer $access_token" "$domain/_synapse/admin/v1/deactivate/@$user:$realm" | jq
 ;;
 
 
@@ -30,7 +51,7 @@ curl -XPOST -H "Authorization: Bearer $access_token" "$domain/_synapse/admin/v1/
 echo -e "Enter Group ID you'd like to delete\n";
 read user
 
-curl -XPOST -H "Authorization: Bearer $access_token" "$domain/_synapse/admin/v1/delete_group/@$user:$realm"
+curl -XPOST -s -H "Authorization: Bearer $access_token" "$domain/_synapse/admin/v1/delete_group/@$user:$realm" | jq
 ;;
 
 "3")
@@ -44,8 +65,8 @@ read pass
 
 # curl -XPOST -H "Authorization: Bearer $access_token" -H "Content-Type: application/json" -d \
 #   '{"new_password":"'$pass'"}' "$domain/_synapse/admin/v1/reset_password/@$user:$realm"
-curl --insecure -XPUT -H "Authorization: Bearer $access_token" -H "Content-Type: application/json" -d \
-  '{"password":"'$pass'","deactivated": false}' "$domain/_synapse/admin/v2/users/@$user:$realm"
+curl --insecure -XPUT -s -H "Authorization: Bearer $access_token" -H "Content-Type: application/json" -d \
+  '{"password":"'$pass'","deactivated": false}' "$domain/_synapse/admin/v2/users/@$user:$realm" | jq
 ;;
 
 "4")
