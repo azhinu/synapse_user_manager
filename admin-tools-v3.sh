@@ -85,6 +85,12 @@ do
     #Exit
     "5") exit 1 || return 1;;
 
+    #Default
+    *) echo -e "Incorrect choise. \n"
+       [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
+    ;;
+
+
   esac
 
 

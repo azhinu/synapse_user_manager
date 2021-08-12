@@ -10,3 +10,5 @@ as the name is changed.
 TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
 0. You just DO WHAT THE FUCK YOU WANT TO.
+
+register_new_matrix_user.py is Apache-2.0 License. Original repo is https://github.com/matrix-org/synapse
